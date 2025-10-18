@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Task Tracker</title>
+    
+    <!-- Link to your custom CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        
+        <form action="/" method="POST" class="input-group">
+            <input type="text" name="content" class="form-control" placeholder="Add a new task..." required>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+
+        <div class="task-list">
+            {% for task in tasks %}
+                <div class="task-list-item">
+                    <!-- Checkbox to toggle completion -->
+                    <form action="{{ url_for('toggle', task_id=task.id) }}" method="POST" style="display:inline;">
+                        <input type="checkbox" class="task-checkbox" onchange="this.form.submit()" {{ 'checked' if task.completed }}>
+                    </form>
+
+                    <!-- The task's text content -->
+                    <span class="task-content {{ 'completed' if task.completed else '' }}">
+                        {{ task.content }}
+                    </span>
+                    
+                    <!-- Actions that appear on hover -->
+                    <div class="task-actions">
+                        <!-- Edit Icon (Link) -->
+                        <a href="{{ url_for('edit', task_id=task.id) }}" class="edit-icon">&#9998;</a>
+
+                        <!-- Delete Button -->
+                        <form action="{{ url_for('delete', task_id=task.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn-danger">&times;</button>
+                        </form>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

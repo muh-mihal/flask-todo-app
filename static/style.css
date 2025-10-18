@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+body {
+    background-color: #727D73; /* Solid Dark Sage Background */
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    background-color: #FFFFFF; /* Clean White Card */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 500px;
+}
+
+h1 {
+    font-weight: 700;
+    color: #727D73; /* Dark Sage Text */
+    text-align: center;
+    border-bottom: 2px solid #F0F0D7; /* Beige Underline */
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    display: flex;
+    margin-bottom: 25px;
+}
+
+.form-control {
+    flex-grow: 1;
+    border: 2px solid #D0DDD0; /* Light Mint Border */
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 16px;
+    margin-right: 10px;
+    background-color: #F0F0D7; /* Beige Input Field */
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #AAB99A; /* Sage Green on focus */
+    background-color: #FFFFFF;
+}
+
+.btn-primary {
+    background-color: #AAB99A; /* Sage Green Button */
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #727D73; /* Dark Sage on hover */
+}
+
+.task-list-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 10px;
+    border-bottom: 1px solid #F0F0D7; /* Beige Separator */
+}
+
+.task-list-item:last-child {
+    border-bottom: none;
+}
+
+.task-checkbox {
+    margin-right: 15px;
+    flex-shrink: 0;
+    width: 1.25em;
+    height: 1.25em;
+    cursor: pointer;
+    accent-color: #AAB99A; /* Use browser-native checkmark in sage green */
+}
+
+.task-content {
+    flex-grow: 1;
+    color: #727D73; /* Dark Sage Text */
+    transition: color 0.2s ease;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #AAB99A; /* Lighter Sage for completed text */
+}
+
+.task-actions {
+    display: flex;
+    align-items: center;
+}
+
+/* Styles for both the delete button AND the edit icon */
+.btn-danger, .edit-icon {
+    background: none;
+    border: none;
+    color: #AAB99A; /* Sage delete/edit icon */
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0; /* Make them invisible by default */
+    transition: opacity 0.2s ease;
+    padding: 0 5px;
+}
+
+/* Show the icons when hovering over the task item */
+.task-list-item:hover .btn-danger,
+.task-list-item:hover .edit-icon {
+    opacity: 1;
+}
+
+/* Specific style for the edit icon link */
+.edit-icon {
+    text-decoration: none;
+    font-weight: bold;
+}
