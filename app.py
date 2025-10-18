@@ -1,29 +1,39 @@
 import sqlite3
+import os
 from flask import Flask, render_template, request, redirect, url_for
 
-# 1. Create the Flask app instance
+# Create the Flask app instance
 app = Flask(__name__)
 
-# --- Database Setup ---
+# Define the path for the database in the instance folder
+DATABASE = os.path.join(app.instance_path, 'tasks.db')
 
 def get_db_connection():
     """Creates a connection to the SQLite database."""
-    conn = sqlite3.connect('tasks.db')
-    conn.row_factory = sqlite3.Row  # This allows accessing columns by name
+    # Ensure the instance folder exists
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass  # Already exists
+    
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
     return conn
 
 def init_db():
     """Initializes the database and creates the 'tasks' table if it doesn't exist."""
     conn = get_db_connection()
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS tasks (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            content TEXT NOT NULL,
-            completed BOOLEAN NOT NULL CHECK (completed IN (0, 1))
-        );
-    ''')
+    with app.open_resource('schema.sql', mode='r') as f:
+        conn.cursor().executescript(f.read())
     conn.commit()
     conn.close()
+
+# --- One-Time Database Initialization ---
+# This function will run before the first request to the app
+@app.before_request
+def before_request():
+    if not os.path.exists(DATABASE):
+        init_db()
 
 # --- Routes ---
 
@@ -39,7 +49,6 @@ def index():
         conn.close()
         return redirect(url_for('index'))
     
-    # On a GET request, fetch all tasks from the database
     tasks_from_db = conn.execute('SELECT * FROM tasks ORDER BY id').fetchall()
     conn.close()
     return render_template('index.html', tasks=tasks_from_db)
@@ -55,7 +64,7 @@ def delete(task_id):
 
 @app.route('/toggle/<int:task_id>', methods=['POST'])
 def toggle(task_id):
-    """Toggles the completion status of a task in the database."""
+    """Toggles the completion status of a task."""
     conn = get_db_connection()
     task = conn.execute('SELECT completed FROM tasks WHERE id = ?', (task_id,)).fetchone()
     if task:
@@ -68,7 +77,7 @@ def toggle(task_id):
 
 @app.route('/edit/<int:task_id>', methods=['GET', 'POST'])
 def edit(task_id):
-    """Handles editing a task in the database."""
+    """Handles editing a task."""
     conn = get_db_connection()
     if request.method == 'POST':
         new_content = request.form['content']
@@ -82,9 +91,7 @@ def edit(task_id):
     conn.close()
     return render_template('edit.html', task=task_to_edit)
 
-# --- Main Execution ---
 
+# --- Main Execution (for local development) ---
 if __name__ == '__main__':
-    # Initialize the database when the app starts
-    init_db()
     app.run(debug=True)
